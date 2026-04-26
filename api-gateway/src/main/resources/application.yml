@@ -1,0 +1,113 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      # Global CORS configuration
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:4200"
+              - "http://localhost:3000"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+
+      # Route configurations
+      routes:
+        # ============================================
+        # Auth Service Routes (Port 8081)
+        # ============================================
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Category Service Routes (Port 8082)
+        # ============================================
+        - id: category-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/categories/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Expense Service Routes (Port 8083)
+        # ============================================
+        - id: expense-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/expenses/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Income Service Routes (Port 8084)
+        # ============================================
+        - id: income-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/incomes/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Budget Service Routes (Port 8085)
+        # ============================================
+        - id: budget-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/budgets/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Recurring Service Routes (Port 8085)
+        # ============================================
+        - id: recurring-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/recurring/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Notification Service Routes (Port 8085)
+        # ============================================
+        - id: notification-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+        # ============================================
+        # Analytics Service Routes (Port 8086)
+        # ============================================
+        - id: analytics-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
